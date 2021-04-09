@@ -1,36 +1,31 @@
 from django.db import models
-from django.db.models import permalink
+from django.contrib.auth.models import User
+
+STATUS = (
+    (0, "Draft"),
+    (1, "Publish")
+)
 
 # Create a blogs model
 #title
 #pub_date
 #body
 #image
-class blog(models.Model)
-    title = models.CharField(max_length=100, unique=True)
-    slug = models.SlugField(max_length=200, unique=True)
-    body = models.TextField()
-    posted = models.DateField(db_index=True, auto_now_add=True)
-    category = models.ForeignKey('blog.Category')
 
-    def__unicode__(self):
-        return '%s' % self.title
+class Blog(models.Model):
+    title = models.CharField(max_length=200, unique=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    body = models.TextField(null=True)
+    image = models.ImageField(upload_to='images/', null=True)
+    author = models.ForeignKey(User, on_delete= models.CASCADE,related_name='blog_posts')
+    updated_on = models.DateTimeField(auto_now= True)
+    status = models.IntegerField(choices=STATUS, default=0)
 
-    @permalink
-    def get_absolute_url(self)
-        return('view_blog_post', None, { 'slug': self.slug})
+class Meta:
+    ordering = ['created_on']
 
-class Category(models.Model)
-    title = models.CharField(max_length=100, db_index=True)
-    slug = models.SlugField(max_length=100, db_index=True)
-
-    def_unicode_(self):
-        return '%s' % self.title
-
-    @permalink
-    def get_absolute_url(self):
-        return ('view_blog_category',None,{'slug': self.slug})
-
+def __str__(self):
+    return self.title
 
 
 

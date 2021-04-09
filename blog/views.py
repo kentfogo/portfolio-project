@@ -1,22 +1,14 @@
-from djangorocks.blog.models import blog, Category
-from django.shortcuts import render_to_response, get_object_or_404
+from django.views import generic
+#from django.views.generic.detail import DetailView
+from blog.models import Blog
 
-def index(request):
-    return render_to_response('index.html', {
-        'categories': Category.objects.all(),
-        'posts': blog.objects.all()[:5]
-    })
+class BlogList(generic.ListView):
+    queryset = Blog.objects.filter(status=1).order_by('-created_on')
+    template_name = 'index.html'
 
-def view_post(request, slug):
-    return render_to_response('view_post.html' {
-        'post': get_object_or_404(blog, slug=slug)
-        })
+class BlogDetail(generic.DetailView):
+    model = Blog
+    template_name = 'blog_detail.html'
 
-def view_category(request, slug):
-    category = get_object_or_404(Category, slug=slug)
-    return render_to_response('view_category.html', {
-        'category':category,
-        'posts': blog.objects.filter(category=category)[:5]
-    })
 
 # Create your views here.
